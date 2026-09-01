@@ -17,11 +17,11 @@ Affiche les **prochains passages** (temps réel) des lignes TBM (tram / bus / ba
 
 ### Installation automatique
 
-[![Ouvre votre instance Home Assistant et ajoute un dépôt dans la boutique communautaire Home Assistant.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=kpagnat&repository=tbm_horaires&category=integration)
+[![Ouvre votre instance Home Assistant et ajoute un dépôt dans la boutique communautaire Home Assistant.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=maximebaudoin&repository=tbm_horaires&category=integration)
 
 ### Installation manuelle
 
-- Copier le dossier **`custom_components/tbm-horaires`** dans le répertoire `config/custom_components/` de votre instance.
+- Copier le dossier **`custom_components/tbm_horaires`** dans le répertoire `config/custom_components/` de votre instance.
 - **Redémarrer Home Assistant**.
 - Aller dans **Paramètres → Appareils & services → + Ajouter une intégration → TBM Horaires**.
 
@@ -38,9 +38,9 @@ Depuis l'intégration :
 
 ## 🚌 Carte Lovelace (fichier JS)
 
-1. Copier le dossier **`www/tbm-horaires-card`** dans `config/www/`.
+1. Copier le dossier **`www/tbm_horaires_card`** dans `config/www/`.
 2. Déclarer la ressource : **Paramètres → Tableaux de bord → Ressources → Ajouter**
-   - **URL** : `/local/tbm-horaires-card/tbm-horaires-card.js`
+   - **URL** : `/local/tbm_horaires_card/tbm-horaires-card.js`
    - **Type** : *JavaScript Module*
 3. Ajouter la carte (Carte **Manuelle**) (avec éditeur) :
 
