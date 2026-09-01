@@ -44,14 +44,16 @@ class TBMNextPassageSensor(CoordinatorEntity, SensorEntity):
     def extra_state_attributes(self):
         data = self.coordinator.data or []
         departures = []
-        destination_label = self._dest
+        configured_destination = self._dest
+        destination_label = (data[0].get("destination") if data else None) or configured_destination
         line_label = self._line
         for v in data[:8]:
             minutes = _mins_to(v.get("expected") or v.get("aimed"))
+            departure_destination = v.get("destination") or configured_destination
             departures.append(
                 {
                     "in_min": minutes,
-                    "destination": destination_label,
+                    "destination": departure_destination,
                     "line_name": line_label,
                     "realtime": v.get("realtime"),
                     "time_expected": v.get("expected") or v.get("aimed"),
@@ -60,7 +62,8 @@ class TBMNextPassageSensor(CoordinatorEntity, SensorEntity):
         return {
             "stop": self._stop,
             "line": self._line,
-            "destination": self._dest,
+            "destination": destination_label,
+            "configured_destination": configured_destination,
             "departures": departures,
         }
 

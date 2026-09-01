@@ -19,6 +19,12 @@
           "select_stop": "Stop"
         }
       },
+      "select_real_destination": {
+        "title": "Selecting actual destination",
+        "data": {
+          "select_real_destination": "Actual destination"
+        }
+      },
       "create_entity": {
         "title": "Entity creation",
         "data": {

@@ -19,6 +19,12 @@
           "select_stop": "Arrêt"
         }
       },
+      "select_real_destination": {
+        "title": "Sélection de la destination réelle",
+        "data": {
+          "select_real_destination": "Destination réelle"
+        }
+      },
       "create_entity": {
         "title": "Création de l'entité",
         "data": {

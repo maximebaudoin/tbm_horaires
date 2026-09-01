@@ -31,6 +31,7 @@ Depuis l'intégration :
 
 - **Sélectionner une ligne**
 - **Choisir l'arrêt**
+- **Choisir la destination réelle** (si la ligne propose plusieurs terminus pour la même direction)
 - **Valider l’entité**
 
 > **Nom du capteur créé** : `TBM [Ligne] [Nom arrêt] [Destination]` (friendly_name).
