@@ -1,0 +1,8 @@
+{
+  "name": "TBM Horaires",
+  "content_in_root": false,
+  "domains": [
+    "tbm_horaires"
+  ],
+  "render_readme": true
+}
