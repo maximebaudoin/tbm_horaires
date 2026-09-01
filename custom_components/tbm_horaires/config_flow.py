@@ -15,6 +15,7 @@ logging.basicConfig(level="DEBUG")
 STEP_SELECT_LINE = "select_line_destination"
 STEP_SELECT_STOP = "select_stop"
 STEP_USER_VALIDATE = "user_validate"
+STEP_SELECT_REAL_DESTINATION = "select_real_destination"
 STEP_CREATE_ENTITY = "create_entity"
 
 class TBMConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -111,10 +112,58 @@ class TBMConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self.user_choice["StopPointRef"] = stop_ref
         self.user_choice["StopName"] = self._stops_map.get(stop_ref, stop_ref)
 
+        self.user_choice["RealDestination"] = self.user_choice["Direction"]
+        self._real_destinations_map = {}
+
+        try:
+            async with httpx.AsyncClient(headers={
+                "Accept": "application/json",
+                "User-Agent": "ha-tbm-horaires/0.1"
+            }) as s:
+                client = SiriLiteClient(s, API_BASE, API_KEY)
+                stop_monitor = await client.stop_monitoring(
+                    stop_ref,
+                    self.user_choice["LineRef"],
+                    self.user_choice["DirectionRef"],
+                    max_visits=15
+                )
+        except Exception as e:
+            _LOGGER.exception("Lecture des passages TBM pour déterminer la destination réelle, erreur: %s", e)
+            stop_monitor = []
+
+        for visit in stop_monitor:
+            destination = (visit.get("destination") or "").strip()
+            if destination and destination not in self._real_destinations_map:
+                self._real_destinations_map[destination] = destination
+
+        if len(self._real_destinations_map) > 1:
+            options = [
+                SelectOptionDict(value=value, label=label)
+                for value, label in self._real_destinations_map.items()
+            ]
+            return self.async_show_form(
+                step_id=STEP_SELECT_REAL_DESTINATION,
+                data_schema=vol.Schema({
+                    vol.Required("select_real_destination"): SelectSelector(SelectSelectorConfig(
+                        options=options, mode=SelectSelectorMode.DROPDOWN
+                    ))
+                })
+            )
+
+        if len(self._real_destinations_map) == 1:
+            self.user_choice["RealDestination"] = next(iter(self._real_destinations_map))
+
+        return self._show_create_entity_form()
+
+    async def async_step_select_real_destination(self, user_input):
+        selected_destination = user_input["select_real_destination"]
+        self.user_choice["RealDestination"] = selected_destination
+        return self._show_create_entity_form()
+
+    def _show_create_entity_form(self):
         stop_name = self.user_choice["StopName"]
         line_name = self.user_choice["LineName"]
-        dest_name = self.user_choice["Direction"]
-
+        dest_name = self.user_choice.get("RealDestination") or self.user_choice["Direction"]
         self.user_choice["Title"] = f"{line_name} > {dest_name} - {stop_name}"
 
         return self.async_show_form(
@@ -145,6 +194,7 @@ class TBMConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             "stop_label": stop_name,
             "line_label": line_name,
             "dest_label": dest_name,
+            "real_destination": self.user_choice.get("RealDestination"),
             "preview": DEFAULT_PREVIEW
         }
         await self.async_set_unique_id(f"{stop_name}-{line_name}-{dest_name}")

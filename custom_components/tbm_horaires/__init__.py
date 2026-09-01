@@ -16,6 +16,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         stop_point_ref=entry.data["stop_point_ref"],
         line_ref=entry.data["line_ref"],
         destination_ref=entry.data["destination_ref"],
+        real_destination=entry.data.get("real_destination"),
         preview=entry.data["preview"]
     )
     await coord.async_config_entry_first_refresh()
